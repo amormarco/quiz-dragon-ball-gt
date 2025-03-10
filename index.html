@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz - Dragon Ball GT</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+            margin: 20px;
+        }
+        .quiz-container {
+            max-width: 600px;
+            background: white;
+            padding: 20px;
+            margin: auto;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .question {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        .options button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: none;
+            border-radius: 5px;
+            background-color: #007BFF;
+            color: white;
+            cursor: pointer;
+        }
+        .options button:hover {
+            background-color: #0056b3;
+        }
+        #result {
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        #corrections {
+            text-align: left;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <h1>Quiz - Dragon Ball GT</h1>
+        <p id="question" class="question"></p>
+        <div class="options" id="options"></div>
+        <button onclick="nextQuestion()" id="next" style="display:none;">Question Suivante</button>
+        <p id="result"></p>
+        <div id="corrections"></div>
+    </div>
+
+    <script>
+        const quizData = [
+            { question: "Pourquoi Goku redevient un enfant ?", 
+              options: ["Mauvais entraînement avec Shenron", "Souhait mal formulé de Pilaf", "Absorption d'énergie", "Expérience de Bulma"], 
+              answer: 1 },
+            { question: "Qui est le premier grand ennemi que Goku affronte ?", 
+              options: ["Super C-17", "Bébé", "Li Shenron", "Ledgic"], 
+              answer: 3 },
+            { question: "Quelle transformation Goku atteint en premier dans GT ?", 
+              options: ["Super Saiyan 4", "Super Saiyan God", "Super Saiyan 3", "Oozaru Doré"], 
+              answer: 3 },
+            { question: "Qui fusionne avec un parasite extraterrestre ?", 
+              options: ["Trunks", "Bébé", "Pan", "Goten"], 
+              answer: 1 },
+            { question: "Quel est le dernier souhait des Dragon Balls ?", 
+              options: ["Ressusciter les morts", "Restaurer la Terre", "Rendre Goku adulte", "Faire disparaître les Dragon Balls"], 
+              answer: 0 },
+            { question: "Comment Goku fusionne-t-il avec les Dragon Balls ?", 
+              options: ["Il absorbe leur énergie", "Shenron l'emmène avec lui", "Elles entrent dans son corps", "Il les mange accidentellement"], 
+              answer: 1 },
+            { question: "Quel est le dragon maléfique ultime ?", 
+              options: ["Li Shenron", "Nuova Shenron", "Eis Shenron", "Omega Shenron"], 
+              answer: 3 },
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let incorrectAnswers = [];
+        
+        function loadQuestion() {
+            document.getElementById("question").textContent = quizData[currentQuestion].question;
+            let optionsContainer = document.getElementById("options");
+            optionsContainer.innerHTML = "";
+            quizData[currentQuestion].options.forEach((option, index) => {
+                let button = document.createElement("button");
+                button.textContent = option;
+                button.onclick = () => checkAnswer(index);
+                optionsContainer.appendChild(button);
+            });
+        }
+
+        function checkAnswer(selected) {
+            if (selected === quizData[currentQuestion].answer) {
+                score++;
+            } else {
+                incorrectAnswers.push({
+                    question: quizData[currentQuestion].question,
+                    chosen: quizData[currentQuestion].options[selected],
+                    correct: quizData[currentQuestion].options[quizData[currentQuestion].answer]
+                });
+            }
+            document.getElementById("next").style.display = "block";
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            if (currentQuestion < quizData.length) {
+                loadQuestion();
+                document.getElementById("next").style.display = "none";
+            } else {
+                showResult();
+            }
+        }
+
+        function showResult() {
+            let resultText = "Votre score : " + score + "/" + quizData.length + "\\n";
+            if (score >= 6) {
+                resultText += "🏆 Tu es un expert de Dragon Ball GT !";
+            } else if (score >= 4) {
+                resultText += "🤔 Pas mal, mais tu peux faire mieux !";
+            } else {
+                resultText += "😅 Il est temps de revoir Dragon Ball GT !";
+            }
+            document.getElementById("question").textContent = "";
+            document.getElementById("options").innerHTML = "";
+            document.getElementById("next").style.display = "none";
+            document.getElementById("result").textContent = resultText;
+            showCorrections();
+        }
+
+        function showCorrections() {
+            let correctionsDiv = document.getElementById("corrections");
+            correctionsDiv.innerHTML = "<h2>Corrections :</h2>";
+            incorrectAnswers.forEach(item => {
+                correctionsDiv.innerHTML += `<p><strong>Question :</strong> ${item.question}<br>
+                                             <strong>Votre réponse :</strong> ${item.chosen}<br>
+                                             <strong>Bonne réponse :</strong> ${item.correct}</p>`;
+            });
+        }
+
+        loadQuestion();
+    </script>
+</body>
+</html>
